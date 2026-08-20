@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>กูจะทดสอบความฉลาดของพวกมึง</title>
+<title>วันนี้มาลองเล่นทายปัญหากัน</title>
 <style>
   :root {
     --bg1: #319849;
@@ -94,6 +94,49 @@
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-bottom: 20px;
+  }
+
+  .timer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .timer-bar {
+    flex: 1;
+    height: 8px;
+    background: #eef0f5;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .timer-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--correct), #facc15);
+    border-radius: 8px;
+    transition: width 1s linear, background-color 0.3s ease;
+  }
+
+  .timer-fill.warning {
+    background: linear-gradient(90deg, #facc15, var(--wrong));
+  }
+
+  .timer-fill.danger {
+    background: var(--wrong);
+  }
+
+  .timer-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 34px;
+    text-align: right;
+  }
+
+  .timer-label.danger {
+    color: var(--wrong);
   }
 
   .question-text {
@@ -232,7 +275,7 @@
 <body>
 
 <div class="quiz-container">
-  <h1>แนะนำเอาสมองออกมาใช่ไอ้พวกกระบือทั้งหลาย</h1>
+  <h1>วันนี้มาลองเล่นทายปัญหากัน</h1>
   <p class="subtitle">ทดสอบความรู้ของมึง</p>
 
   <div class="quiz-screen" id="quizScreen">
@@ -240,6 +283,11 @@
       <div class="progress-fill" id="progressFill"></div>
     </div>
     <div class="progress-label" id="progressLabel">ข้อ 1/10</div>
+
+    <div class="timer-row">
+      <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+      <div class="timer-label" id="timerLabel">8s</div>
+    </div>
 
     <div class="question-text" id="questionText"></div>
     <div class="options" id="optionsContainer"></div>
@@ -264,12 +312,12 @@
       answer: 1
     },
     {
-      question: "สงครามโลกครั้งที่ 2 สิ้นสุดอย่างเป็นทางการในปีไหน?",
+      question: "เก่งนิงั้นมึงเจอคำถามนี้ สงครามโลกครั้งที่ 2 สิ้นสุดอย่างเป็นทางการในปีไหน?",
       options: ["1945", "1946", "1947", "1948"],
       answer: 2
     },
     {
-      question: "อวัยวะใดในร่างกายมนุษย์ที่ผลิตอินซูลิน?",
+      question: "ถือว่าใช้ได้งั้น อวัยวะใดในร่างกายมนุษย์ที่ผลิตอินซูลิน?",
       options: ["ตับอ่อน", "ไต", "ต่อมใต้สมอง", "ต่อมไทรอยด์"],
       answer: 0
     },
@@ -284,7 +332,7 @@
       answer: 3
     },
     {
-      question: "ใครเป็นผู้เขียนทฤษฎีสัมพัทธภาพ?",
+      question: "มึงมาถึงนี้ถือว่าเก่งและนะงั้นเจอ ใครเป็นผู้เขียนทฤษฎีสัมพัทธภาพ?",
       options: ["อัลเบิร์ต ไอน์สไตน์", "นิวตัน", "โคลี", "เดวิด"],
       answer: 0
     },
@@ -304,15 +352,19 @@
       answer: 2
     },
     {
-      question: "ใครคือคนที่หำใหญ่ที่สุดในโลก?",
+      question: "ข้อสุดท้ายตอบให้ถูกนะจ๊ะ ใครคือคนที่หำใหญ่ที่สุดในโลก?",
       options: ["Mungkorng", "New", "Book", "C"],
       answer: 3
     }
   ];
 
+  const TIME_LIMIT = 8;
+
   let currentQuestion = 0;
   let score = 0;
   let answered = false;
+  let timeLeft = TIME_LIMIT;
+  let timerInterval = null;
 
   const questionText = document.getElementById('questionText');
   const optionsContainer = document.getElementById('optionsContainer');
@@ -320,6 +372,8 @@
   const nextBtn = document.getElementById('nextBtn');
   const progressFill = document.getElementById('progressFill');
   const progressLabel = document.getElementById('progressLabel');
+  const timerFill = document.getElementById('timerFill');
+  const timerLabel = document.getElementById('timerLabel');
   const quizScreen = document.getElementById('quizScreen');
   const resultScreen = document.getElementById('resultScreen');
   const resultScore = document.getElementById('resultScore');
@@ -346,11 +400,49 @@
       btn.addEventListener('click', () => selectAnswer(idx));
       optionsContainer.appendChild(btn);
     });
+
+    startTimer();
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = TIME_LIMIT;
+    updateTimerUI();
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerUI();
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        handleTimeout();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI() {
+    timerLabel.textContent = `${timeLeft}s`;
+    timerFill.style.width = `${(timeLeft / TIME_LIMIT) * 100}%`;
+
+    timerFill.classList.remove('warning', 'danger');
+    timerLabel.classList.remove('danger');
+    if (timeLeft <= 3) {
+      timerFill.classList.add('danger');
+      timerLabel.classList.add('danger');
+    } else if (timeLeft <= 5) {
+      timerFill.classList.add('warning');
+    }
+  }
+
+  function handleTimeout() {
+    if (answered) return;
+    answered = true;
+    nextQuestion();
   }
 
   function selectAnswer(selectedIdx) {
     if (answered) return;
     answered = true;
+    clearInterval(timerInterval);
 
     const q = questions[currentQuestion];
     const buttons = optionsContainer.querySelectorAll('.option-btn');
@@ -359,7 +451,7 @@
     if (selectedIdx === q.answer) {
       score++;
       buttons[selectedIdx].classList.add('correct');
-      feedback.textContent = 'ถูกเก่งนี่หว่ามึงอะ';
+      feedback.textContent = 'ถูก..เก่งนี่หว่ามึงอะ';
       feedback.className = 'feedback show correct';
     } else {
       buttons[selectedIdx].classList.add('wrong');
@@ -382,6 +474,7 @@
   }
 
   function showResult() {
+    clearInterval(timerInterval);
     quizScreen.classList.add('hide');
     resultScreen.classList.add('show');
 
