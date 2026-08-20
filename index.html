@@ -6,15 +6,15 @@
 <title>วันนี้มาลองเล่นทายปัญหากัน</title>
 <style>
   :root {
-    --bg1: #319849;
-    --bg2: #00d4ff;
-    --card-bg: #ffffff;
-    --text-dark: #2b2d42;
-    --text-muted: #6b7280;
+    --bg1: #1a0000;
+    --bg2: #000000;
+    --card-bg: #161616;
+    --text-dark: #f5f5f5;
+    --text-muted: #a3a3a3;
     --correct: #22c55e;
     --wrong: #ef4444;
-    --accent: #7c3aed;
-    --accent2: #06b6d4;
+    --accent: #dc2626;
+    --accent2: #7f1d1d;
   }
 
   * { box-sizing: border-box; }
@@ -35,7 +35,8 @@
     width: 100%;
     max-width: 520px;
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    box-shadow: 0 20px 60px rgba(220,38,38,0.25);
+    border: 1px solid #2a0a0a;
     padding: 32px;
     position: relative;
     overflow: hidden;
@@ -75,7 +76,7 @@
 
   .progress-bar {
     height: 8px;
-    background: #eef0f5;
+    background: #2a2a2a;
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 8px;
@@ -106,7 +107,7 @@
   .timer-bar {
     flex: 1;
     height: 8px;
-    background: #eef0f5;
+    background: #2a2a2a;
     border-radius: 8px;
     overflow: hidden;
   }
@@ -158,8 +159,8 @@
     text-align: left;
     padding: 14px 18px;
     border-radius: 14px;
-    border: 2px solid #e5e7eb;
-    background: #f9fafb;
+    border: 2px solid #2e2e2e;
+    background: #1f1f1f;
     font-size: 1rem;
     color: var(--text-dark);
     cursor: pointer;
@@ -169,7 +170,7 @@
 
   .option-btn:hover:not(:disabled) {
     border-color: var(--accent);
-    background: #f3f0ff;
+    background: rgba(220, 38, 38, 0.15);
     transform: translateY(-2px);
   }
 
@@ -178,16 +179,16 @@
   }
 
   .option-btn.correct {
-    background: #dcfce7;
+    background: rgba(34, 197, 94, 0.15);
     border-color: var(--correct);
-    color: #166534;
+    color: #bbf7d0;
     font-weight: 600;
   }
 
   .option-btn.wrong {
-    background: #fee2e2;
+    background: rgba(239, 68, 68, 0.18);
     border-color: var(--wrong);
-    color: #991b1b;
+    color: #fecaca;
     font-weight: 600;
   }
 
@@ -208,8 +209,8 @@
   }
 
   .feedback.show { display: block; }
-  .feedback.correct { background: #dcfce7; color: #166534; }
-  .feedback.wrong { background: #fee2e2; color: #991b1b; }
+  .feedback.correct { background: rgba(34, 197, 94, 0.15); color: #bbf7d0; }
+  .feedback.wrong { background: rgba(239, 68, 68, 0.18); color: #fecaca; }
 
   .next-btn {
     margin-top: 20px;
@@ -276,15 +277,15 @@
 
 <div class="quiz-container">
   <h1>วันนี้มาลองเล่นทายปัญหากัน</h1>
-  <p class="subtitle">ทดสอบความรู้ของมึง</p>
+  <p class="subtitle">ยกเครื่องใหม่</p>
 
   <div class="quiz-screen" id="quizScreen">
     <div class="progress-bar">
       <div class="progress-fill" id="progressFill"></div>
     </div>
-    <div class="progress-label" id="progressLabel">ข้อ 1/10</div>
+    <div class="progress-label" id="progressLabel">ข้อ 1/13</div>
 
-    <div class="timer-row">
+    <div class="timer-row" id="timerRow">
       <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
       <div class="timer-label" id="timerLabel">8s</div>
     </div>
@@ -307,64 +308,81 @@
 <script>
   const questions = [
     {
-      question: "ธาตุใดมีเลขอะตอม 79 ตอบมาไอ้โง่?",
-      options: ["เงิน (Ag)", "ทองคำ (Au)", "แพลตินัม (Pt)", "ium (Rn)"],
+      question: "กระบวนการใดที่เซลล์ใช้ผลิต ATP ในปริมาณมากที่สุด เมื่อมีออกซิเจนเพียงพอ?",
+      options: ["ไกลโคไลซิส", "การหมัก", "ห่วงโซ่การขนส่งอิเล็กตรอน", "วัฏจักรคัลวิน"],
+      answer: 2
+    },
+    {
+      question: "สมการของชเรอดิงเงอร์ใช้อธิบายเรื่องใดในกลศาสตร์ควอนตัม ?",
+      options: ["การเคลื่อนที่ของดาวเคราะห์", "พฤติกรรมคลื่นของอนุภาคระดับควอนตัม", "แรงโน้มถ่วงของวัตถุมวลมาก", "การนำไฟฟ้าของโลหะ"],
       answer: 1
     },
     {
-      question: "เก่งนิงั้นมึงเจอคำถามนี้ สงครามโลกครั้งที่ 2 สิ้นสุดอย่างเป็นทางการในปีไหน?",
-      options: ["1945", "1946", "1947", "1948"],
+      question: "ในจักรวาล Marvel มิติที่ตัวละครหดตัวเล็กลงจนเข้าสู่โลกอนุภาคย่อยเรียกว่าอะไร?",
+      options: ["Negative Zone", "Quantum Realm", "Dark Dimension", "Microverse"],
+      answer: 1
+    },
+    {
+      question: "อนุภาคสมมติที่ใช้ในการเดินทางผ่านมิติเวลาในหนัง Avengers: Endgame เรียกว่าอะไร?",
+      options: ["Pym Particles", "Cosmic Rays", "Infinity Stones", "Quantum Foam"],
+      answer: 0
+    },
+    {
+      question: "ในทางฟิสิกส์จริง คำว่า Quantum Entanglement หมายถึงอะไร?",
+      options: ["การที่อนุภาคสองตัวเชื่อมโยงกันแม้อยู่ห่างไกล", "การที่อนุภาคหายไปตลอดกาล", "การที่แสงเดินทางเร็วกว่าปกติ", "การรวมตัวของสสารมืด"],
+      answer: 1
+    },
+    {
+      question: "ในทฤษฎีสัมพัทธภาพพิเศษของไอน์สไตน์ ปริมาณใดที่คงที่เสมอสำหรับผู้สังเกตทุกคน ไม่ว่าจะเคลื่อนที่ด้วยความเร็วใด?",
+      options: ["มวล", "เวลา", "ความเร็วแสงในสุญญากาศ", "โมเมนตัม"],
       answer: 2
     },
     {
-      question: "ถือว่าใช้ได้งั้น อวัยวะใดในร่างกายมนุษย์ที่ผลิตอินซูลิน?",
-      options: ["ตับอ่อน", "ไต", "ต่อมใต้สมอง", "ต่อมไทรอยด์"],
-      answer: 0
+      question: "ตัวร้ายที่มีพลังเกี่ยวข้องกับ Quantum Realm อย่างมากในหนัง คือใคร?",
+      options: ["Thanos", "Kang the Conqueror", "Loki", "DR.DOOM"],
+      answer: 1
     },
     {
-      question: "ประเทศใดมีพรมแดนติดกับประเทศอื่นมากที่สุดในโลก",
-      options: ["รัสเซีย", "เมกา", "บราซิล", "เยอรมนี"],
-      answer: 0
+      question: "MODOK ในหนัง Ant-Man and the Wasp: Quantumania แต่เดิมคือตัวละครใด?",
+      options: ["Scott Lang", "Darren Cross", "Bill Foster", "Peter Parker"],
+      answer: 1
     },
     {
-      question: "ค่า pH ของสารละลายที่เป็นกลางคือเท่าไหร่?",
-      options: ["9", "8", "4", "7"],
-      answer: 3
+      question: "ในทฤษฎีบิ๊กแบง ปรากฏการณ์ใดที่เกิดขึ้นกับเอกภพในปัจจุบัน?",
+      options: ["เอกภพกำลังหดตัว", "เอกภพกำลังขยายตัว", "ดาราจักรกำลังหมุนเร็วขึ้น", "อุณหภูมิของเอกภพคงที่"],
+      answer: 1
     },
     {
-      question: "มึงมาถึงนี้ถือว่าเก่งและนะงั้นเจอ ใครเป็นผู้เขียนทฤษฎีสัมพัทธภาพ?",
-      options: ["อัลเบิร์ต ไอน์สไตน์", "นิวตัน", "โคลี", "เดวิด"],
-      answer: 0
-    },
-    {
-      question: "เมืองหลวงของประเทศออสเตรเลียคือเมืองใด?",
-      options: [" Sidney", " Melbourne", " Canberra", " Brisbane"],
-      answer: 2
-    },
-    {
-      question: "ในทางคอมพิวเตอร์ RAM ย่อมาจากอะไร?",
-      options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "Remote Access Memory"],
-      answer: 0
-    },
-    {
-      question: "ผลรวมของมุมภายในสามเหลี่ยมมีค่าเท่ากับกี่องศา?",
-      options: ["160", "360", "180", "190"],
-      answer: 2
-    },
-    {
-      question: "ข้อสุดท้ายตอบให้ถูกนะจ๊ะ ใครคือคนที่หำใหญ่ที่สุดในโลก?",
+      question: "ใครคือคนที่หำใหญ่ที่สุดในโลก?",
       options: ["Mungkorng", "New", "Book", "C"],
       answer: 3
+    },
+    {
+      question: "ในทฤษฎีความใหญ่คุณคิดว่าคุณ C เนี่ยอันเท่าไหน",
+      options: ["56", "58", "60", "62"],
+      answer: 2
+    },
+    {
+      question: "ข้อมเมื่อกี้หยอกเล่น เอาดีๆคุณคิดว่าการเดินทางข้ามเวลานั้นจะสงผลเสียอย่างไรต่อความเป็นจริงและควันนี้คุณใส่กางเกงในสีอะไร",
+      options: ["สีแดง", "สีดำ", "สีขาว", "สีครีม"],
+      free: true
+    },
+    {
+      question: "คุณคิดว่าคุณเนี่ยสัดส่วนเท่าไหร่",
+      options: ["32 24 32", "34 26 34", "32 26 32", "32 26 24"],
+      free: true
     }
   ];
 
   const TIME_LIMIT = 8;
+  const RESULTS_ENDPOINT = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
   let currentQuestion = 0;
   let score = 0;
   let answered = false;
   let timeLeft = TIME_LIMIT;
   let timerInterval = null;
+  let answersLog = [];
 
   const questionText = document.getElementById('questionText');
   const optionsContainer = document.getElementById('optionsContainer');
@@ -372,6 +390,7 @@
   const nextBtn = document.getElementById('nextBtn');
   const progressFill = document.getElementById('progressFill');
   const progressLabel = document.getElementById('progressLabel');
+  const timerRow = document.getElementById('timerRow');
   const timerFill = document.getElementById('timerFill');
   const timerLabel = document.getElementById('timerLabel');
   const quizScreen = document.getElementById('quizScreen');
@@ -401,7 +420,13 @@
       optionsContainer.appendChild(btn);
     });
 
-    startTimer();
+    if (q.free) {
+      clearInterval(timerInterval);
+      timerRow.style.display = 'none';
+    } else {
+      timerRow.style.display = 'flex';
+      startTimer();
+    }
   }
 
   function startTimer() {
@@ -448,16 +473,26 @@
     const buttons = optionsContainer.querySelectorAll('.option-btn');
     buttons.forEach(b => b.disabled = true);
 
+    if (q.free) {
+      score++;
+      buttons[selectedIdx].classList.add('correct');
+      answersLog.push({ question: q.question, selected: q.options[selectedIdx], correct: null });
+      nextQuestion();
+      return;
+    }
+
     if (selectedIdx === q.answer) {
       score++;
       buttons[selectedIdx].classList.add('correct');
       feedback.textContent = 'ถูก..เก่งนี่หว่ามึงอะ';
       feedback.className = 'feedback show correct';
+      answersLog.push({ question: q.question, selected: q.options[selectedIdx], correct: true });
     } else {
       buttons[selectedIdx].classList.add('wrong');
       buttons[q.answer].classList.add('correct');
       feedback.textContent = 'โง่ไอ้สัสแค่นี้ตอบไม่ถูก';
       feedback.className = 'feedback show wrong';
+      answersLog.push({ question: q.question, selected: q.options[selectedIdx], correct: false });
     }
 
     progressFill.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
@@ -473,12 +508,31 @@
     }
   }
 
+  function sendResultsToSheet() {
+    if (!RESULTS_ENDPOINT.startsWith('https://script.google.com')) return;
+    try {
+      fetch(RESULTS_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          score: score,
+          total: questions.length,
+          answers: answersLog
+        })
+      });
+    } catch (err) {
+      console.error('ส่งผลลัพธ์ไม่สำเร็จ', err);
+    }
+  }
+
   function showResult() {
     clearInterval(timerInterval);
     quizScreen.classList.add('hide');
     resultScreen.classList.add('show');
 
     resultScore.textContent = `คุณได้ ${score}/${questions.length} ข้อ`;
+    sendResultsToSheet();
 
     const percent = score / questions.length;
     if (percent === 1) {
@@ -499,6 +553,7 @@
   function restartQuiz() {
     currentQuestion = 0;
     score = 0;
+    answersLog = [];
     resultScreen.classList.remove('show');
     quizScreen.classList.remove('hide');
     loadQuestion();
