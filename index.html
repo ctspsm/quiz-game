@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>กูจะทดสอบความฉลาดของพวกมึง</title>
+<style>
+  :root {
+    --bg1: #319849;
+    --bg2: #00d4ff;
+    --card-bg: #ffffff;
+    --text-dark: #2b2d42;
+    --text-muted: #6b7280;
+    --correct: #22c55e;
+    --wrong: #ef4444;
+    --accent: #7c3aed;
+    --accent2: #06b6d4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Kanit', 'Sarabun', sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .quiz-container {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 520px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    animation: pop 0.4s ease;
+  }
+
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .quiz-container::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    color: var(--text-dark);
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #eef0f5;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    line-height: 1.5;
+    min-height: 56px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-btn {
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 1rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: #f3f0ff;
+    transform: translateY(-2px);
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  .option-btn.correct {
+    background: #dcfce7;
+    border-color: var(--correct);
+    color: #166534;
+    font-weight: 600;
+  }
+
+  .option-btn.wrong {
+    background: #fee2e2;
+    border-color: var(--wrong);
+    color: #991b1b;
+    font-weight: 600;
+  }
+
+  .feedback {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 1rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct { background: #dcfce7; color: #166534; }
+  .feedback.wrong { background: #fee2e2; color: #991b1b; }
+
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .next-btn.show { display: block; }
+  .next-btn:hover { opacity: 0.9; }
+
+  .result-screen {
+    text-align: center;
+    display: none;
+  }
+
+  .result-screen.show { display: block; }
+
+  .result-emoji {
+    font-size: 4rem;
+    margin-bottom: 8px;
+  }
+
+  .result-score {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+
+  .result-message {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-size: 1rem;
+  }
+
+  .restart-btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .restart-btn:hover { transform: translateY(-2px); }
+
+  .quiz-screen { display: block; }
+  .quiz-screen.hide { display: none; }
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h1>แนะนำเอาสมองออกมาใช่ไอ้พวกกระบือทั้งหลาย</h1>
+  <p class="subtitle">ทดสอบความรู้ของมึง</p>
+
+  <div class="quiz-screen" id="quizScreen">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">ข้อ 1/10</div>
+
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn">ข้อถัดไป →</button>
+  </div>
+
+  <div class="result-screen" id="resultScreen">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-message" id="resultMessage"></div>
+    <button class="restart-btn" id="restartBtn">เล่นใหม่</button>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "ธาตุใดมีเลขอะตอม 79 ตอบมาไอ้โง่?",
+      options: ["เงิน (Ag)", "ทองคำ (Au)", "แพลตินัม (Pt)", "ium (Rn)"],
+      answer: 1
+    },
+    {
+      question: "สงครามโลกครั้งที่ 2 สิ้นสุดอย่างเป็นทางการในปีไหน?",
+      options: ["1945", "1946", "1947", "1948"],
+      answer: 2
+    },
+    {
+      question: "อวัยวะใดในร่างกายมนุษย์ที่ผลิตอินซูลิน?",
+      options: ["ตับอ่อน", "ไต", "ต่อมใต้สมอง", "ต่อมไทรอยด์"],
+      answer: 0
+    },
+    {
+      question: "ประเทศใดมีพรมแดนติดกับประเทศอื่นมากที่สุดในโลก",
+      options: ["รัสเซีย", "เมกา", "บราซิล", "เยอรมนี"],
+      answer: 0
+    },
+    {
+      question: "ค่า pH ของสารละลายที่เป็นกลางคือเท่าไหร่?",
+      options: ["9", "8", "4", "7"],
+      answer: 3
+    },
+    {
+      question: "ใครเป็นผู้เขียนทฤษฎีสัมพัทธภาพ?",
+      options: ["อัลเบิร์ต ไอน์สไตน์", "นิวตัน", "โคลี", "เดวิด"],
+      answer: 0
+    },
+    {
+      question: "เมืองหลวงของประเทศออสเตรเลียคือเมืองใด?",
+      options: [" Sidney", " Melbourne", " Canberra", " Brisbane"],
+      answer: 2
+    },
+    {
+      question: "ในทางคอมพิวเตอร์ RAM ย่อมาจากอะไร?",
+      options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "Remote Access Memory"],
+      answer: 0
+    },
+    {
+      question: "ผลรวมของมุมภายในสามเหลี่ยมมีค่าเท่ากับกี่องศา?",
+      options: ["160", "360", "180", "190"],
+      answer: 2
+    },
+    {
+      question: "ใครคือคนที่หำใหญ่ที่สุดในโลก?",
+      options: ["Mungkorng", "New", "Book", "C"],
+      answer: 3
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let answered = false;
+
+  const questionText = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const feedback = document.getElementById('feedback');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const quizScreen = document.getElementById('quizScreen');
+  const resultScreen = document.getElementById('resultScreen');
+  const resultScore = document.getElementById('resultScore');
+  const resultMessage = document.getElementById('resultMessage');
+  const resultEmoji = document.getElementById('resultEmoji');
+  const restartBtn = document.getElementById('restartBtn');
+
+  function loadQuestion() {
+    answered = false;
+    feedback.className = 'feedback';
+    feedback.textContent = '';
+    nextBtn.classList.remove('show');
+
+    const q = questions[currentQuestion];
+    questionText.textContent = `${currentQuestion + 1}. ${q.question}`;
+    progressLabel.textContent = `ข้อ ${currentQuestion + 1}/${questions.length}`;
+    progressFill.style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+    optionsContainer.innerHTML = '';
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => selectAnswer(idx));
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(selectedIdx) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentQuestion];
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    if (selectedIdx === q.answer) {
+      score++;
+      buttons[selectedIdx].classList.add('correct');
+      feedback.textContent = 'ถูกเก่งนี่หว่ามึงอะ';
+      feedback.className = 'feedback show correct';
+    } else {
+      buttons[selectedIdx].classList.add('wrong');
+      buttons[q.answer].classList.add('correct');
+      feedback.textContent = 'โง่ไอ้สัสแค่นี้ตอบไม่ถูก';
+      feedback.className = 'feedback show wrong';
+    }
+
+    progressFill.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+    nextBtn.classList.add('show');
+  }
+
+  function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    quizScreen.classList.add('hide');
+    resultScreen.classList.add('show');
+
+    resultScore.textContent = `คุณได้ ${score}/${questions.length} ข้อ`;
+
+    const percent = score / questions.length;
+    if (percent === 1) {
+      resultEmoji.textContent = '🏆';
+      resultMessage.textContent = 'ถือว่ามึงเก่ง';
+    } else if (percent >= 0.6) {
+      resultEmoji.textContent = '🎉';
+      resultMessage.textContent = 'ได้อยู่';
+    } else if (percent >= 0.4) {
+      resultEmoji.textContent = '👍';
+      resultMessage.textContent = 'พอได้แต่สมองมึงน้อยเกินไป';
+    } else {
+      resultEmoji.textContent = '💪';
+      resultMessage.textContent = 'ควายชัดๆมึงอะ';
+    }
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    resultScreen.classList.remove('show');
+    quizScreen.classList.remove('hide');
+    loadQuestion();
+  }
+
+  nextBtn.addEventListener('click', nextQuestion);
+  restartBtn.addEventListener('click', restartQuiz);
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
