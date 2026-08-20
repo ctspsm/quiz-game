@@ -389,16 +389,16 @@
 
     const percent = score / questions.length;
     if (percent === 1) {
-      resultEmoji.textContent = '🏆';
+      resultEmoji.textContent = '';
       resultMessage.textContent = 'ถือว่ามึงเก่ง';
     } else if (percent >= 0.6) {
-      resultEmoji.textContent = '🎉';
+      resultEmoji.textContent = '';
       resultMessage.textContent = 'ได้อยู่';
     } else if (percent >= 0.4) {
-      resultEmoji.textContent = '👍';
+      resultEmoji.textContent = '';
       resultMessage.textContent = 'พอได้แต่สมองมึงน้อยเกินไป';
     } else {
-      resultEmoji.textContent = '💪';
+      resultEmoji.textContent = '';
       resultMessage.textContent = 'ควายชัดๆมึงอะ';
     }
   }
